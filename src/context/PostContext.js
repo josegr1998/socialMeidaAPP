@@ -10,9 +10,9 @@ import {
 } from "../constants/actions";
 import { useUserContext } from "./UserContext";
 
-// const url = "https://memories-project1515.herokuapp.com/posts/";
+const url = "https://memories-project1515.herokuapp.com/posts/";
 
-const url = "http://localhost:5000/posts/";
+// const url = "http://localhost:5000/posts/";
 const PostContext = React.createContext();
 
 const initialState = {
