@@ -21,15 +21,47 @@ const Post = (props) => {
   const {
     selectedFile,
     title,
-    creator,
+    //cuando todavia no tengo la autenticacion aca va creator
+    name,
     createdAt,
     tags,
     message,
-    likeCount,
+    likes,
     _id,
+    creator,
   } = props;
+
+  //se pueden crear subcomponents inside the component, pretty cool
+
+  const Likes = () => {
+    if (likes.length > 0) {
+      return likes.find(
+        (like) => like === (user?.result?.googleId || user?.result?._id)
+      ) ? (
+        <>
+          <FaRegThumbsUp fontSize='small' />{" "}
+          {likes.length > 2
+            ? `You and ${likes.length - 1} others liked this post`
+            : `${likes.length} like${likes.length > 1 ? "s" : ""}`}
+        </>
+      ) : (
+        <>
+          <FaRegThumbsUp fontSize='small' />
+          {likes.length} {likes.length === 1 ? `like` : "likes"}
+        </>
+      );
+    } else {
+      return (
+        <>
+          <FaRegThumbsUp fontSize='small' /> &nbsp;like
+        </>
+      );
+    }
+  };
+
   const { changeEditID, deletePost, likePost } = usePostContext();
   const classes = useStyles();
+  const user = JSON.parse(localStorage.getItem("profile"));
 
   return (
     <Card className={classes.card}>
@@ -43,19 +75,25 @@ const Post = (props) => {
         }}
       />
       <div className={classes.overlay}>
-        <Typography variant='h6'>{creator}</Typography>
+        {/*cuando todavia no creo la autenticacion aca iba creator. Una vez que creo la autenticacion puedo
+        sacar el name de el perfil que guardo en el localStorage o de la variable global */}
+        <Typography variant='h6'>{name}</Typography>
         <Typography variant='body2'>{moment(createdAt).fromNow()}</Typography>
       </div>
       <div className={classes.overlay2}>
-        <Button
-          style={{ color: "white" }}
-          size='small'
-          onClick={() => {
-            changeEditID(_id);
-          }}
-        >
-          <BsThreeDots fontSize='default' style={{ color: "black" }} />
-        </Button>
+        {(user?.result?.googleId === creator ||
+          user?.result?._id === creator) && (
+          <Button
+            style={{ color: "white" }}
+            size='small'
+            onClick={() => {
+              changeEditID(_id);
+            }}
+          >
+            <BsThreeDots fontSize='default' style={{ color: "black" }} />
+          </Button>
+        )}
+
         <div className={classes.details}>
           <Typography variant='body2' color='textSecondary'>
             {tags.map((tag) => `#${tag} `)}
@@ -73,19 +111,20 @@ const Post = (props) => {
                 likePost(_id);
               }}
             >
-              <FaRegThumbsUp fontSize='small' />
-              Like {likeCount}
+              <Likes />
             </Button>
-            <Button
-              size='small'
-              color='primary'
-              onClick={() => {
-                deletePost(_id);
-              }}
-            >
-              <FaRegThumbsUp fontSize='small' />
-              Delete
-            </Button>
+            {(user?.result?.googleId === creator ||
+              user?.result?._id === creator) && (
+              <Button
+                size='small'
+                color='primary'
+                onClick={() => {
+                  deletePost(_id);
+                }}
+              >
+                Delete
+              </Button>
+            )}
           </CardActions>
         </div>
       </div>

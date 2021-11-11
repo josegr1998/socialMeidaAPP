@@ -6,7 +6,8 @@ import { usePostContext } from "../../context/PostContext";
 
 const Form = () => {
   const classes = useStyles();
-
+  //recordar intentar hacerlo una variable global
+  const profile = JSON.parse(localStorage.getItem("profile"));
   const { createPost, editID, updatePost, posts } = usePostContext();
 
   //en mi proyecto hacerlo global usando context para que cuando edito algo o subo algo estos valores vuelvan a ""
@@ -57,6 +58,17 @@ const Form = () => {
     }
   }, [editID]);
 
+  //conditional render. Si tengo profile como variable global (sacado del localStorage) esto se
+  //va a volver a renderizar solo. Cuando clickeo logout podria hacer que profile sea null
+  if (!profile) {
+    return (
+      <Paper className={classes.paper}>
+        <Typography variant='h6' align='center'>
+          Please Sign In to create your own memories and like others memories
+        </Typography>
+      </Paper>
+    );
+  }
   return (
     <Paper className={classes.paper}>
       <form
